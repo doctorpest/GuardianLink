@@ -32,7 +32,7 @@
         <q-card class="feature-card animate-hover">
           <q-card-section>
             <span class="emoji">🔍</span>
-            <h3>Mise en relation rapide</h3>
+            <h4>Mise en relation rapide</h4>
             <p>Accédez à un garant en quelques clics.</p>
           </q-card-section>
         </q-card>
@@ -40,7 +40,7 @@
         <q-card class="feature-card animate-hover">
           <q-card-section>
             <span class="emoji">🛡️</span>
-            <h3>Sécurisé & Fiable</h3>
+            <h4>Sécurisé & Fiable</h4>
             <p>Profils vérifiés et transactions sécurisées.</p>
           </q-card-section>
         </q-card>
@@ -48,7 +48,7 @@
         <q-card class="feature-card animate-hover">
           <q-card-section>
             <span class="emoji">💬</span>
-            <h3>Une communauté engagée</h3>
+            <h4>Une communauté engagée</h4>
             <p>Échangez et connectez-vous avec des personnes de confiance.</p>
           </q-card-section>
         </q-card>
@@ -84,13 +84,17 @@
         </q-card>
       </div>
     </div>
+
     <!-- CONTACT & FAQ -->
     <div class="links-section">
       <q-btn flat label="FAQ" to="/faq" />
       <q-btn flat label="Contact" to="/contact" />
+      <q-btn flat label="Mentions légales" to="/mentions-legales" />
     </div>
+
   </q-page>
 </template>
+
 
 <style scoped>
 /* Style général */
@@ -179,4 +183,6 @@
 .links-section {
   margin-top: 30px;
 }
+
+
 </style>

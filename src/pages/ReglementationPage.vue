@@ -9,7 +9,7 @@
     <div class="reglementation-content">
       <q-card class="regle-card">
         <q-card-section>
-          <h3>📜 Conditions pour être garant</h3>
+          <h4>📜 Conditions pour être garant</h4>
           <p>
             Un garant doit être une personne majeure avec des revenus stables. Il doit fournir des
             justificatifs prouvant sa solvabilité.
@@ -19,7 +19,7 @@
 
       <q-card class="regle-card">
         <q-card-section>
-          <h3>🏡 Obligations des étudiants</h3>
+          <h4>🏡 Obligations des étudiants</h4>
           <p>
             Les étudiants doivent respecter les engagements contractuels avec leur garant et leur
             bailleur. Tout manquement peut entraîner des sanctions.
@@ -29,7 +29,7 @@
 
       <q-card class="regle-card">
         <q-card-section>
-          <h3>⚖️ Lois en vigueur</h3>
+          <h4>⚖️ Lois en vigueur</h4>
           <p>
             Notre service respecte la loi sur la garantie locative en France. Les transactions sont
             encadrées par le Code civil et le droit du logement.

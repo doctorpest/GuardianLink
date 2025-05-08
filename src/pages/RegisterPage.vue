@@ -1,13 +1,11 @@
 <template>
   <q-page class="q-pa-md">
     <div class="q-gutter-md" style="max-width: 1000px; margin: 0 auto">
-      <!-- Carte avec fond turquoise -->
       <q-card bordered class="bg-turquoise text-white shadow-5 custom-card">
         <q-card-section class="text-center">
           <div class="text-h4">S'inscrire</div>
         </q-card-section>
 
-        <!-- Formulaire d'inscription -->
         <q-card-section class="q-pa-md">
           <q-input
             v-model="email"
@@ -15,7 +13,7 @@
             outlined
             dense
             class="q-mb-lg"
-            :rules="[(val) => (val && val.length > 0) || 'Ce champ est requis']"
+            :rules="[(val) => !!val || 'Ce champ est requis']"
           />
           <q-input
             v-model="username"
@@ -23,55 +21,55 @@
             outlined
             dense
             class="q-mb-lg"
-            :rules="[(val) => (val && val.length > 0) || 'Ce champ est requis']"
+            :rules="[(val) => !!val || 'Ce champ est requis']"
           />
           <q-input
             v-model="password"
             label="Mot de passe"
+            type="password"
             outlined
             dense
-            type="password"
             class="q-mb-lg"
-            :rules="[
-              (val) =>
-                (val && val.length >= 6) || 'Le mot de passe doit avoir au moins 6 caractères',
-            ]"
+            :rules="[(val) => val.length >= 6 || 'Au moins 6 caractères']"
           />
           <q-input
             v-model="confirmPassword"
             label="Confirmer le mot de passe"
+            type="password"
             outlined
             dense
-            type="password"
             class="q-mb-lg"
             :rules="[(val) => val === password || 'Les mots de passe doivent correspondre']"
           />
 
-          <!-- Choix du type d'utilisateur (Etudiant ou Garant) -->
           <q-checkbox
             v-model="isStudent"
             label="Je suis un étudiant"
             class="q-mb-lg"
             color="primary"
-            :true-value="true"
-            :false-value="false"
+            @update:model-value="
+              (val) => {
+                if (val) isGarant = false;
+              }
+            "
           />
           <q-checkbox
             v-model="isGarant"
             label="Je suis un garant"
             class="q-mb-lg"
             color="primary"
-            :true-value="true"
-            :false-value="false"
+            @update:model-value="
+              (val) => {
+                if (val) isStudent = false;
+              }
+            "
           />
         </q-card-section>
 
-        <!-- Actions -->
         <q-card-actions class="q-pa-md">
           <q-btn label="S'inscrire" color="black" @click="register" class="full-width custom-btn" />
         </q-card-actions>
 
-        <!-- Lien pour redirection vers la connexion si déjà un compte -->
         <q-card-section class="text-center text-black">
           <div>
             Déjà un compte ?
@@ -83,42 +81,61 @@
   </q-page>
 </template>
 
-<script lang="ts">
-export default {
-  data() {
-    return {
-      email: '',
-      username: '',
-      password: '',
-      confirmPassword: '',
-      isStudent: false, // Valeur par défaut pour l'étudiant
-      isGarant: false, // Valeur par défaut pour le garant
-    };
-  },
-  methods: {
-    register() {
-      if (this.email && this.username && this.password && this.confirmPassword) {
-        if (this.password === this.confirmPassword) {
-          // Logique d'inscription
-          console.log(
-            'Inscription avec:',
-            this.email,
-            this.username,
-            this.password,
-            this.isStudent,
-            this.isGarant,
-          );
-        } else {
-          console.error('Les mots de passe ne correspondent pas.');
-        }
-      } else {
-        console.error('Tous les champs doivent être remplis.');
-      }
-    },
-    redirectToLogin() {
-      this.$router.push('/login'); // Rediriger vers la page de connexion
-    },
-  },
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+
+const email = ref('');
+const username = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const isStudent = ref(false);
+const isGarant = ref(false);
+const router = useRouter();
+
+const register = async () => {
+  try {
+    if (!email.value || !username.value || !password.value || !confirmPassword.value) {
+      console.error('Tous les champs doivent être remplis.');
+      return;
+    }
+
+    if (password.value !== confirmPassword.value) {
+      console.error('Les mots de passe ne correspondent pas.');
+      return;
+    }
+
+    if (isStudent.value && isGarant.value) {
+      console.error('Veuillez choisir un seul rôle.');
+      return;
+    }
+
+    const role = isStudent.value ? 'etudiant' : isGarant.value ? 'garant' : null;
+    if (!role) {
+      console.error('Veuillez sélectionner un rôle.');
+      return;
+    }
+
+    await axios.post('http://localhost:5050/api/users/register', {
+      email: email.value,
+      name: username.value,
+      password: password.value,
+      role: role,
+    });
+
+    await router.push('/login');
+  } catch (err) {
+    const error = err as { response?: { data?: { message?: string } } };
+    console.error(
+      'Erreur lors de l’inscription:',
+      error.response?.data?.message || 'Une erreur inconnue est survenue',
+    );
+  }
+};
+
+const redirectToLogin = async () => {
+  await router.push('/login');
 };
 </script>
 
@@ -131,46 +148,41 @@ export default {
 }
 
 .bg-turquoise {
-  background-color: #12b5a6; /* turquoise */
+  background-color: #12b5a6;
 }
 
-/* Style de la carte agrandie */
 .custom-card {
-  border-radius: 16px; /* Coins arrondis pour la carte */
-  width: 120%; /* Prendre 100% de la largeur définie dans le parent */
-  max-width: 1000px; /* Limiter la taille à 1000px */
-  min-height: 600px; /* Augmenter la hauteur de la carte */
-  padding: 30px; /* Ajouter un peu de padding autour du contenu */
+  border-radius: 16px;
+  width: 120%;
+  max-width: 1000px;
+  min-height: 600px;
+  padding: 30px;
 }
 
-/* Style des champs d'entrée (Input) */
 .q-input {
-  background-color: white; /* Fond blanc pour les champs */
-  color: black; /* Texte noir */
-  border-radius: 8px; /* Coins arrondis */
+  background-color: white;
+  color: black;
+  border-radius: 8px;
   padding: 10px;
 }
 
-/* Style du bouton principal */
 .custom-btn {
-  border-radius: 8px; /* Coins arrondis pour le bouton */
-  background-color: black; /* Fond noir */
-  color: white; /* Texte blanc sur le bouton */
+  border-radius: 8px;
+  background-color: black;
+  color: white;
   font-weight: bold;
 }
 
-/* Style du bouton pour redirection vers la page de connexion */
 .q-btn.flat {
   color: black;
   font-weight: normal;
 }
 
-/* Marges et espacements pour une meilleure présentation */
 .q-mb-lg {
-  margin-bottom: 20px !important; /* Espace entre les champs */
+  margin-bottom: 20px !important;
 }
 
 .q-pa-md {
-  padding: 20px; /* Ajuster les espacements de la card */
+  padding: 20px;
 }
 </style>
