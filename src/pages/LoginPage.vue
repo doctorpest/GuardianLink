@@ -47,8 +47,9 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5050/api',
+  baseURL: 'https://backend-api-1ouy.onrender.com/api',
 });
+
 
 const router = useRouter();
 

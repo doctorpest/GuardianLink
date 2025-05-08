@@ -117,7 +117,7 @@ const register = async () => {
       return;
     }
 
-    await axios.post('http://localhost:5050/api/users/register', {
+    await axios.post('https://backend-api-1ouy.onrender.com/api/users/register', {
       email: email.value,
       name: username.value,
       password: password.value,
